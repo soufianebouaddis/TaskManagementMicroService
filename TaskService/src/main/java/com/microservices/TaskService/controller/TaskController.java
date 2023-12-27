@@ -31,7 +31,7 @@ public class TaskController {
     }
 
     @GetMapping("/all")
-    public ResponseEntity<List<Task>> getAllUsers() {
+    public ResponseEntity<List<Task>> getAllTasks() {
         try {
             List<Task> tasks = taskService.findAll();
             return new ResponseEntity<>(tasks, HttpStatus.OK);
@@ -41,19 +41,19 @@ public class TaskController {
     }
 
     @PostMapping("/save")
-    public ResponseEntity<Task> saveUser(@RequestBody @Valid TaskDto taskDto) {
+    public ResponseEntity<Task> saveTask(@RequestBody @Valid TaskDto taskDto) {
         Task task = taskMapper.mapToEntity(taskDto);
         return new ResponseEntity<>(taskService.add(task), HttpStatus.CREATED);
     }
 
     @PutMapping("/update/{taskId}")
-    public ResponseEntity<?> updateUser(@PathVariable int taskId, @RequestBody @Valid Task updatedTask) {
+    public ResponseEntity<?> updateTask(@PathVariable int taskId, @RequestBody @Valid Task updatedTask) {
         taskService.update(taskId, updatedTask);
         return new ResponseEntity<>("User updated successfully", HttpStatus.OK);
     }
 
     @DeleteMapping("/delete/{taskId}")
-    public ResponseEntity<?> deleteUser(@PathVariable int taskId) {
+    public ResponseEntity<?> deleteTask(@PathVariable int taskId) {
         taskService.delete(taskId);
         return new ResponseEntity<>("Task deleted successfully", HttpStatus.OK);
     }

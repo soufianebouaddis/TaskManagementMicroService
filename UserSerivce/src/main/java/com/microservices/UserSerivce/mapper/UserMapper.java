@@ -3,6 +3,8 @@ package com.microservices.UserSerivce.mapper;
 import com.microservices.UserSerivce.dto.UserDto;
 import com.microservices.UserSerivce.dto.UserResponse;
 import com.microservices.UserSerivce.entity.User;
+
+import org.apache.catalina.connector.Response;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
 
@@ -27,5 +29,10 @@ public class UserMapper implements MapperInterface<User, UserDto> {
     @Override
     public User ReponseToEntity(UserResponse userResponse) {
         return modelMapper.map(userResponse, User.class);
+    }
+
+    @Override
+    public UserResponse ReponseToEntity(User user) {
+        return modelMapper.map(user, UserResponse.class);
     }
 }

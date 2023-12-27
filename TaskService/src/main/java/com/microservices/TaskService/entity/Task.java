@@ -34,4 +34,6 @@ public class Task {
     private TaskStatus status;
     @Column(nullable = false)
     private String label;
+    @Column(nullable = false)
+    private String description;
 }

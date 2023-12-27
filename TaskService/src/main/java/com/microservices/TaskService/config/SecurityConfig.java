@@ -32,6 +32,7 @@ public class SecurityConfig {
                 .csrf((c) -> c.disable())
                 .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .oauth2ResourceServer(o -> o.jwt(Customizer.withDefaults()))
+                .authorizeHttpRequests(o -> o.requestMatchers("/api/task/save").permitAll())
                 .authorizeHttpRequests(o -> o.anyRequest().authenticated());
         return http.build();
     }

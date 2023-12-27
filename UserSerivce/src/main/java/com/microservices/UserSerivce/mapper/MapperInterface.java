@@ -11,4 +11,6 @@ public interface MapperInterface<A, B> {
     public UserDto mapFromEntity(User user);
 
     public User ReponseToEntity(UserResponse userResponse);
+
+    public UserResponse ReponseToEntity(User user);
 }

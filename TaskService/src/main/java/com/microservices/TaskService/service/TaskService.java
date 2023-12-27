@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 
 import com.microservices.TaskService.dao.Dao;
 import com.microservices.TaskService.entity.Task;
+import com.microservices.TaskService.entity.TaskStatus;
 import com.microservices.TaskService.exception.CustomNotFoundException;
 import com.microservices.TaskService.repository.TaskRepository;
 
@@ -20,7 +21,14 @@ public class TaskService implements Dao<Task> {
 
     @Override
     public Task add(Task o) {
-        return taskRepository.save(o);
+        Task newTask = Task.builder()
+                .date_debut(o.getDate_debut())
+                .date_fin(o.getDate_fin())
+                .status(TaskStatus.NOTYET)
+                .label(o.getLabel())
+                .description(o.getDescription())
+                .build();
+        return taskRepository.save(newTask);
     }
 
     @Override

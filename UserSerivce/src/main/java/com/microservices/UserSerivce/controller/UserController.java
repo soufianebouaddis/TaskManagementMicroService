@@ -4,6 +4,7 @@ import com.microservices.UserSerivce.RequestResponse.LoginRequest;
 import com.microservices.UserSerivce.RequestResponse.Response;
 import com.microservices.UserSerivce.dto.TaskDto;
 import com.microservices.UserSerivce.dto.UserDto;
+import com.microservices.UserSerivce.dto.UserResponse;
 import com.microservices.UserSerivce.entity.User;
 import com.microservices.UserSerivce.exception.CustomNotFoundException;
 import com.microservices.UserSerivce.jwt.JwtUtils;
@@ -96,9 +97,10 @@ public class UserController {
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody @Valid LoginRequest loginRequest) {
         User user = userDetails.loadUserByUsername(loginRequest.getUsername());
+        UserResponse userResponse = userMapper.ReponseToEntity(user);
         if (encoder.matches(loginRequest.getPassword(), user.getPassword())) {
             return ResponseEntity.ok()
-                    .body(new Response(user, jwtUtils.generateToken(user.getUsername(), "USER"),
+                    .body(new Response(userResponse, jwtUtils.generateToken(user.getUsername(), "USER"),
                             jwtUtils.generateRefreshToken(user.getUsername())));
         }
         return ResponseEntity.badRequest().body("Username or Password invalide check them please");

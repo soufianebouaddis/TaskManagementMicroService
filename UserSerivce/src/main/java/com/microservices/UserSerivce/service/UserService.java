@@ -5,11 +5,13 @@ import com.microservices.UserSerivce.dto.TaskDto;
 import com.microservices.UserSerivce.entity.User;
 import com.microservices.UserSerivce.exception.CustomNotFoundException;
 import com.microservices.UserSerivce.external.TaskService;
+import com.microservices.UserSerivce.jwt.JwtUtils;
 import com.microservices.UserSerivce.mapper.UserMapper;
 import com.microservices.UserSerivce.repository.UserRepository;
 import org.springframework.stereotype.*;
 import org.springframework.web.client.RestTemplate;
 import java.util.List;
+import org.springframework.http.HttpHeaders;
 
 @Service
 public class UserService implements Dao<User> {
@@ -17,13 +19,15 @@ public class UserService implements Dao<User> {
     TaskService taskService;
     UserMapper userMapper;
     RestTemplate restTemplate;
+    JwtUtils jwtUtils;
 
     public UserService(UserRepository userRepository, TaskService taskService, UserMapper userMapper,
-            RestTemplate restTemplate) {
+            RestTemplate restTemplate, JwtUtils jwtUtils) {
         this.userRepository = userRepository;
         this.taskService = taskService;
         this.userMapper = userMapper;
         this.restTemplate = restTemplate;
+        this.jwtUtils = jwtUtils;
     }
 
     @Override
@@ -67,8 +71,11 @@ public class UserService implements Dao<User> {
     }
 
     public String addtask(String username, TaskDto taskDto) {
+
         User u = userRepository.findByUsername(username)
                 .orElseThrow(() -> new CustomNotFoundException("User not found with username: " + username));
+        HttpHeaders headers = new HttpHeaders();
+        headers.setBearerAuth(jwtUtils.generateToken(u.getUsername(), "USER"));
         TaskDto test = restTemplate.postForEntity("http://TASK-SERVICES/api/task/save", taskDto,
                 TaskDto.class).getBody();
         u.getTasks().add(test.getId());

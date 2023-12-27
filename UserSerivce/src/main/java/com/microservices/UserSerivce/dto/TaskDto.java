@@ -23,5 +23,7 @@ public class TaskDto {
     private TaskStatus status;
     @NotNull(message = "Label cannot be null")
     private String label;
+    @NotNull(message = "Description cannot be null")
+    private String description;
 
 }
