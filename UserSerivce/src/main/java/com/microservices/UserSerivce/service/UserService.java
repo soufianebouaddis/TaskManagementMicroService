@@ -11,6 +11,8 @@ import com.microservices.UserSerivce.repository.UserRepository;
 import org.springframework.stereotype.*;
 import org.springframework.web.client.RestTemplate;
 import java.util.List;
+
+import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 
 @Service
@@ -70,13 +72,32 @@ public class UserService implements Dao<User> {
         return userList;
     }
 
+    /*
+     * public String addtask(String username, TaskDto taskDto) {
+     * 
+     * User u = userRepository.findByUsername(username)
+     * .orElseThrow(() -> new
+     * CustomNotFoundException("User not found with username: " + username));
+     * HttpHeaders headers = new HttpHeaders();
+     * headers.setBearerAuth(jwtUtils.generateToken(u.getUsername(), "USER"));
+     * TaskDto test =
+     * restTemplate.postForEntity("http://TASK-SERVICES/api/task/save", taskDto,
+     * TaskDto.class).getBody();
+     * u.getTasks().add(test.getId());
+     * if (!u.getTasks().isEmpty()) {
+     * userRepository.save(u);
+     * return "inside if";
+     * }
+     * return "task added";
+     * }
+     */
     public String addtask(String username, TaskDto taskDto) {
-
         User u = userRepository.findByUsername(username)
                 .orElseThrow(() -> new CustomNotFoundException("User not found with username: " + username));
         HttpHeaders headers = new HttpHeaders();
         headers.setBearerAuth(jwtUtils.generateToken(u.getUsername(), "USER"));
-        TaskDto test = restTemplate.postForEntity("http://TASK-SERVICES/api/task/save", taskDto,
+        HttpEntity<TaskDto> entity = new HttpEntity<>(taskDto, headers);
+        TaskDto test = restTemplate.postForEntity("http://TASK-SERVICES/api/task/save", entity,
                 TaskDto.class).getBody();
         u.getTasks().add(test.getId());
         if (!u.getTasks().isEmpty()) {
