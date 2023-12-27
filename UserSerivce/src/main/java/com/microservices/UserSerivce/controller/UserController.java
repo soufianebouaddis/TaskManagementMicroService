@@ -1,32 +1,45 @@
 package com.microservices.UserSerivce.controller;
 
+import com.microservices.UserSerivce.RequestResponse.LoginRequest;
+import com.microservices.UserSerivce.RequestResponse.Response;
 import com.microservices.UserSerivce.dto.TaskDto;
 import com.microservices.UserSerivce.dto.UserDto;
 import com.microservices.UserSerivce.entity.User;
 import com.microservices.UserSerivce.exception.CustomNotFoundException;
+import com.microservices.UserSerivce.jwt.JwtUtils;
 import com.microservices.UserSerivce.mapper.UserMapper;
+import com.microservices.UserSerivce.repository.UserRepository;
+import com.microservices.UserSerivce.service.UserDetailsCustom;
 import com.microservices.UserSerivce.service.UserService;
 
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/users")
 public class UserController {
 
+    @Autowired
     private UserService userService;
+    @Autowired
     private UserMapper userMapper;
-
-    public UserController(UserService userService, UserMapper userMapper) {
-        this.userService = userService;
-        this.userMapper = userMapper;
-    }
+    @Autowired
+    private UserDetailsCustom userDetails;
+    @Autowired
+    private PasswordEncoder encoder;
+    @Autowired
+    private JwtUtils jwtUtils;
+    @Autowired
+    private UserRepository repository;
 
     @GetMapping("/{userId}")
     public ResponseEntity<User> getUserById(@PathVariable int userId) throws CustomNotFoundException {
@@ -78,5 +91,33 @@ public class UserController {
     @GetMapping("/loaduser/{username}")
     public ResponseEntity<User> loadUser(@PathVariable String username) {
         return ResponseEntity.ok().body(userService.loadUserByUsername(username));
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<?> login(@RequestBody @Valid LoginRequest loginRequest) {
+        User user = userDetails.loadUserByUsername(loginRequest.getUsername());
+        if (encoder.matches(loginRequest.getPassword(), user.getPassword())) {
+            return ResponseEntity.ok()
+                    .body(new Response(user, jwtUtils.generateToken(user.getUsername(), "USER"),
+                            jwtUtils.generateRefreshToken(user.getUsername())));
+        }
+        return ResponseEntity.badRequest().body("Username or Password invalide check them please");
+    }
+
+    @PostMapping("/register")
+    public ResponseEntity<?> register(@RequestBody @Valid UserDto dto) {
+        Optional<User> user = repository.findByUsernameOrEmail(dto.getUsername(), dto.getEmail());
+        if (user.isPresent()) {
+            throw new EntityNotFoundException("founded");
+        }
+        User newUser = User.builder()
+                .nom(dto.getNom())
+                .prenom(dto.getPrenom())
+                .password(encoder.encode(dto.getPassword()))
+                .username(dto.getUsername())
+                .email(dto.getEmail()).build();
+        userService.add(newUser);
+
+        return ResponseEntity.ok(newUser);
     }
 }

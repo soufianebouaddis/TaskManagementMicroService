@@ -15,5 +15,3 @@ spring:
   cloud:
     discovery:
       enabled: true
-  
-
