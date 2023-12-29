@@ -96,8 +96,9 @@ public class UserController {
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody @Valid LoginRequest loginRequest) {
         User user = userDetails.loadUserByUsername(loginRequest.getUsername());
-        UserResponse userResponse = userMapper.ReponseToEntity(user);
         if (encoder.matches(loginRequest.getPassword(), user.getPassword())) {
+            UserResponse userResponse = userMapper.ReponseToEntity(user);
+            userResponse.setTasks(userService.getTasksForUser(user.getUsername()));
             return ResponseEntity.ok()
                     .body(new Response(userResponse, jwtUtils.generateToken(user.getUsername(), "USER"),
                             jwtUtils.generateRefreshToken(user.getUsername())));

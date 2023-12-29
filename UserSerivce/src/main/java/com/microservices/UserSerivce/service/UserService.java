@@ -11,9 +11,11 @@ import com.microservices.UserSerivce.repository.UserRepository;
 import org.springframework.stereotype.*;
 import org.springframework.web.client.RestTemplate;
 import java.util.List;
-
+import java.util.stream.Collectors;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseEntity;
 
 @Service
 public class UserService implements Dao<User> {
@@ -102,9 +104,9 @@ public class UserService implements Dao<User> {
         u.getTasks().add(test.getId());
         if (!u.getTasks().isEmpty()) {
             userRepository.save(u);
-            return "inside if";
+            return "Task Added to System";
         }
-        return "task added";
+        return "Task not added to system";
     }
 
     public String loadUsername(String username) {
@@ -117,4 +119,25 @@ public class UserService implements Dao<User> {
         return userRepository.findByUsername(username)
                 .orElseThrow(() -> new CustomNotFoundException("User not found with username: " + username));
     }
+
+    public List<TaskDto> getTasksForUser(String username) {
+        User u = userRepository.findByUsername(username)
+                .orElseThrow(() -> new CustomNotFoundException("User not found with username: " + username));
+        String jwtToken = jwtUtils.generateToken(u.getUsername(), "USER");
+        HttpHeaders headers = new HttpHeaders();
+        headers.setBearerAuth(jwtToken);
+        HttpEntity<String> entity = new HttpEntity<>(headers);
+
+        return u.getTasks().stream()
+                .map(taskId -> {
+                    ResponseEntity<TaskDto> response = restTemplate.exchange(
+                            "http://TASK-SERVICES/api/task/" + taskId,
+                            HttpMethod.GET,
+                            entity,
+                            TaskDto.class);
+                    return response.getBody();
+                })
+                .collect(Collectors.toList());
+    }
+
 }
