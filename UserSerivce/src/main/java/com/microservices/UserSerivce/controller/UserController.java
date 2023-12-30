@@ -126,4 +126,18 @@ public class UserController {
         return ResponseEntity.ok(newUser);
     }
 
+    @DeleteMapping("/{username}/tasks/{taskId}")
+    public ResponseEntity<String> deleteTaskFromUser(@PathVariable String username, @PathVariable int taskId) {
+        userService.deleteUserTask(username, taskId);
+        return ResponseEntity.ok("Task deleted from user's list and database");
+    }
+
+    @PutMapping("/{username}/updatetask/{taskId}")
+    public ResponseEntity<?> editUserTask(
+            @PathVariable String username,
+            @PathVariable int taskId,
+            @RequestBody @Valid TaskDto editedTask) {
+        userService.editUserTask(username, taskId, editedTask);
+        return ResponseEntity.ok("Task updated successfully");
+    }
 }

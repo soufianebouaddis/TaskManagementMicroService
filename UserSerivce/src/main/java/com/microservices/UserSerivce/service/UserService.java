@@ -140,4 +140,31 @@ public class UserService implements Dao<User> {
                 .collect(Collectors.toList());
     }
 
+    public void deleteUserTask(String username, int idTask) {
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new CustomNotFoundException("User not found with username: " + username));
+        user.getTasks().removeIf(id -> id.equals(idTask));
+        userRepository.save(user);
+        String jwtToken = jwtUtils.generateToken(user.getUsername(), "USER");
+        HttpHeaders headers = new HttpHeaders();
+        headers.setBearerAuth(jwtToken);
+        HttpEntity<String> entity = new HttpEntity<>(headers);
+        restTemplate.exchange("http://TASK-SERVICES/api/task/delete/" + idTask, HttpMethod.DELETE, entity,
+                String.class);
+    }
+
+    public void editUserTask(String username, int idTask, TaskDto editedTask) {
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new CustomNotFoundException("User not found with username: " + username));
+        String jwtToken = jwtUtils.generateToken(user.getUsername(), "USER");
+        HttpHeaders headers = new HttpHeaders();
+        headers.setBearerAuth(jwtToken);
+        HttpEntity<TaskDto> entity = new HttpEntity<>(editedTask, headers);
+        ResponseEntity<Void> response = restTemplate.exchange(
+                "http://TASK-SERVICES/api/task/update/" + idTask,
+                HttpMethod.PUT,
+                entity,
+                Void.class);
+
+    }
 }
