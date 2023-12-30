@@ -126,7 +126,7 @@ public class UserController {
         return ResponseEntity.ok(newUser);
     }
 
-    @DeleteMapping("/{username}/tasks/{taskId}")
+    @DeleteMapping("/{username}/deletetask/{taskId}")
     public ResponseEntity<String> deleteTaskFromUser(@PathVariable String username, @PathVariable int taskId) {
         userService.deleteUserTask(username, taskId);
         return ResponseEntity.ok("Task deleted from user's list and database");
