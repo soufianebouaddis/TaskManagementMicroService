@@ -93,7 +93,7 @@ public class UserService implements Dao<User> {
      * return "task added";
      * }
      */
-    public String addtask(String username, TaskDto taskDto) {
+    public User addtask(String username, TaskDto taskDto) {
         User u = userRepository.findByUsername(username)
                 .orElseThrow(() -> new CustomNotFoundException("User not found with username: " + username));
         HttpHeaders headers = new HttpHeaders();
@@ -104,9 +104,9 @@ public class UserService implements Dao<User> {
         u.getTasks().add(test.getId());
         if (!u.getTasks().isEmpty()) {
             userRepository.save(u);
-            return "Task Added to System";
+            return u;
         }
-        return "Task not added to system";
+        return new User();
     }
 
     public String loadUsername(String username) {

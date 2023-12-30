@@ -89,8 +89,11 @@ public class UserController {
     }
 
     @GetMapping("/loaduser/{username}")
-    public ResponseEntity<User> loadUser(@PathVariable String username) {
-        return ResponseEntity.ok().body(userService.loadUserByUsername(username));
+    public ResponseEntity<UserResponse> loadUser(@PathVariable String username) {
+        UserResponse userResponse = userMapper.ReponseToEntity(userService.loadUserByUsername(username));
+        userResponse.setTasks(userService
+                .getTasksForUser(userMapper.ReponseToEntity(userService.loadUserByUsername(username)).getUsername()));
+        return ResponseEntity.ok().body(userResponse);
     }
 
     @PostMapping("/login")
