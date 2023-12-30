@@ -153,7 +153,7 @@ public class UserService implements Dao<User> {
                 String.class);
     }
 
-    public void editUserTask(String username, int idTask, TaskDto editedTask) {
+    public TaskDto editUserTask(String username, int idTask, TaskDto editedTask) {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new CustomNotFoundException("User not found with username: " + username));
         String jwtToken = jwtUtils.generateToken(user.getUsername(), "USER");
@@ -165,6 +165,6 @@ public class UserService implements Dao<User> {
                 HttpMethod.PUT,
                 entity,
                 Void.class);
-
+        return editedTask;
     }
 }

@@ -133,11 +133,10 @@ public class UserController {
     }
 
     @PutMapping("/{username}/updatetask/{taskId}")
-    public ResponseEntity<?> editUserTask(
+    public ResponseEntity<TaskDto> editUserTask(
             @PathVariable String username,
             @PathVariable int taskId,
             @RequestBody @Valid TaskDto editedTask) {
-        userService.editUserTask(username, taskId, editedTask);
-        return ResponseEntity.ok("Task updated successfully");
+        return ResponseEntity.ok(userService.editUserTask(username, taskId, editedTask));
     }
 }
