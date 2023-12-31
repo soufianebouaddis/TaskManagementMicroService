@@ -32,8 +32,11 @@ public class SecurityConfig {
     @Value("${secret.key}")
     private String secretKey;
 
-    @Autowired
     private UserDetailsCustom userDetailsService;
+
+    public SecurityConfig(UserDetailsCustom userDetailsService) {
+        this.userDetailsService = userDetailsService;
+    }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {

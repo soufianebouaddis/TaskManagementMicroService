@@ -48,7 +48,6 @@ public class TaskService implements Dao<Task> {
     public Task delete(int id) {
         Task temp = taskRepository.findById(id)
                 .orElseThrow(() -> new CustomNotFoundException("Task not found with ID: " + id));
-        ;
         taskRepository.deleteById(id);
         return temp;
     }
