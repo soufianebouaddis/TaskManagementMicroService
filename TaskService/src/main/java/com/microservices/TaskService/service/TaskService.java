@@ -39,6 +39,7 @@ public class TaskService implements Dao<Task> {
             task.setDate_debut(o.getDate_debut());
             task.setDate_fin(o.getDate_fin());
             task.setStatus(o.getStatus());
+            task.setDescription(o.getDescription());
             return taskRepository.save(task);
         }).orElseThrow(() -> new CustomNotFoundException("Task Not found with this ID : " + id));
     }
