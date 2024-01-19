@@ -6,6 +6,7 @@ services:
     container_name: mysql-container
     environment:
       MYSQL_ROOT_PASSWORD: root
+      MYSQL_TCP_PORT: 3307
     ports:
       - "3307:3307"
     networks:
