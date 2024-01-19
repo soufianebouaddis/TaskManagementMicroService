@@ -7,7 +7,7 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: root
     ports:
-      - "3306:3306"
+      - "3307:3307"
     networks:
       - microservices-network
 
@@ -44,7 +44,7 @@ services:
     networks:
       - microservices-network
     environment:
-      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/taskmanagerservice?createDatabaseIfNotExist=true
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3307/taskmanagerservice?createDatabaseIfNotExist=true
       SPRING_DATASOURCE_USERNAME: root
       SPRING_DATASOURCE_PASSWORD: root
     healthcheck:
@@ -65,7 +65,7 @@ services:
     networks:
       - microservices-network
     environment:
-      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/usermanagerservice?createDatabaseIfNotExist=true
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3307/usermanagerservice?createDatabaseIfNotExist=true
       SPRING_DATASOURCE_USERNAME: root
       SPRING_DATASOURCE_PASSWORD: root
     healthcheck:
@@ -78,7 +78,7 @@ services:
     image: phpmyadmin/phpmyadmin
     environment:
       PMA_HOST: mysql
-      PMA_PORT: 3306
+      PMA_PORT: 3307
       MYSQL_ROOT_PASSWORD: root
     ports:
       - "8084:80"
