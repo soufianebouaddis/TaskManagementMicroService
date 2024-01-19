@@ -2,12 +2,13 @@ version: '3'
 
 services:
   mysql:
+    # Assuming you already have a MySQL container with the name "mysqldb" running on port 3306
     image: mysql:latest
-    container_name: mysql-container
+    container_name: mysqldb
+    ports:
+      - "3306:3306"
     environment:
       MYSQL_ROOT_PASSWORD: root
-    ports:
-      - "3307:3307"
     networks:
       - microservices-network
 
@@ -44,7 +45,7 @@ services:
     networks:
       - microservices-network
     environment:
-      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3307/taskmanagerservice?createDatabaseIfNotExist=true
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysqldb:3306/taskmanagerservice?createDatabaseIfNotExist=true
       SPRING_DATASOURCE_USERNAME: root
       SPRING_DATASOURCE_PASSWORD: root
     healthcheck:
@@ -55,7 +56,7 @@ services:
 
   user-service:
     build:
-      context: ./UserSerivce
+      context: ./UserService
     ports:
       - "8082:8082"
     depends_on:
@@ -65,7 +66,7 @@ services:
     networks:
       - microservices-network
     environment:
-      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3307/usermanagerservice?createDatabaseIfNotExist=true
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysqldb:3306/usermanagerservice?createDatabaseIfNotExist=true
       SPRING_DATASOURCE_USERNAME: root
       SPRING_DATASOURCE_PASSWORD: root
     healthcheck:
@@ -77,8 +78,8 @@ services:
   phpmyadmin:
     image: phpmyadmin/phpmyadmin
     environment:
-      PMA_HOST: mysql
-      PMA_PORT: 3307
+      PMA_HOST: mysqldb
+      PMA_PORT: 3306
       MYSQL_ROOT_PASSWORD: root
     ports:
       - "8084:80"
