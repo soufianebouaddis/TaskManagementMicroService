@@ -15,6 +15,9 @@ spring:
   application:
     name: USER-SERVICES
   jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQLDialect
     hibernate:
       ddl-auto: update
     show-sql: true
