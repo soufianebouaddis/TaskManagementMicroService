@@ -3,6 +3,9 @@
 server:
   port: 8088
 spring:
+  cloud:
+    discovery:
+      enabled: true
   datasource:
     url: jdbc:mysql://localhost:3306/taskmanagerservice?createDatabaseIfNotExist=true
     username: root
@@ -22,7 +25,7 @@ eureka:
     fetch-registry: true
     register-with-eureka : true
     service-url:
-      defaultZone: ${EUREKA_SERVER-ADDRESS:http://localhost:8761/eureka}
+      defaultZone: ${EUREKA_SERVER-ADDRESS:http://register-server:8761/eureka}
 
 secret:
   key: 3304c82760031750a3c17a10b28639fccb2b9fccba3731f3e85b096ad930543821c3349318c922d5996e932fc0a74f957a8c4bf311c059c340642759795be7c4
